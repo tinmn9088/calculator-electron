@@ -3,18 +3,17 @@ import * as path from "path";
 
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 600,
-    height: 400
+    width: 400,
+    height: 550,
+    resizable: false
   });
 
-  // win.webContents.openDevTools()
-
-  win.loadFile(path.join(__dirname + "/index.html")).then(() => {
-    // implement
-  });
+  // win.webContents.openDevTools();
+  
+  win.setMenu(null);
+  win.loadFile(path.join(__dirname, "/index.html"));
 }
 
 app.on("ready", () => {
-  console.log("App is ready");
   createWindow();
 });

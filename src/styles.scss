@@ -1,0 +1,136 @@
+body {
+  font-family: "Open Sans", sans-serif;
+  background-color: rgb(255, 221, 226);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 300px;
+  height: 500px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.container__input {
+  background-image: url(assets/pinky-waiting.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: flex;
+  flex-direction: column-reverse;
+
+  height: 150px;
+}
+
+.container__input input {
+  box-sizing: border-box;
+  width: 100%;
+  
+  font-size: 1em;
+  font-weight: bolder;
+  letter-spacing: 0.1em;
+
+  background-color: rgb(255, 160, 176);
+  border: 3px solid rgb(190, 34, 60);
+  border-radius: 1em;
+  color: white;
+  
+  padding: 0.3em 1em;
+  text-overflow: ellipsis;
+}
+
+.container__message {
+  margin-left: 1.5em;
+  font-size: small;
+  color: red;
+  opacity: 0;
+}
+
+.container__input input:focus {
+  outline: none;
+}
+
+.container__input input:active {
+  background-color: rgb(255, 160, 176);
+  border: 3px solid rgb(190, 34, 60);
+}
+
+.container__memory {
+  font-size: small;
+  font-weight: bolder;
+
+  margin-top: 0;
+}
+
+.container__btns {
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px 10px;
+  align-items: center;
+  justify-items: center;
+}
+
+.container__btns button {
+  cursor: pointer;
+  user-select: none;
+
+  width: 50px;
+  height: 50px;
+  
+  text-decoration: none;
+  font-size: 1em;
+  font-weight: bolder;
+  letter-spacing: 0.1em;
+  padding: 0.25em 0.5em;
+
+  background-color: rgb(252, 205, 213);
+  border: 3px solid rgb(190, 34, 60);
+  border-radius: 50%;
+
+  transition: 0.1s;
+}
+
+.container__btns button:hover {
+  background-color: rgb(255, 184, 197);
+  border: 3px solid rgb(190, 34, 60);
+}
+
+.container__btns button:focus {
+  outline: none;
+}
+
+.container__btns button:active {
+  background-color: rgb(248, 140, 160);
+  border: 3px solid rgb(190, 34, 60);
+}
+
+.error-animation {
+  animation-name: errorAnimation;
+  animation-duration: 0.3s;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+
+  transition: 0.1s;
+}
+
+@keyframes errorAnimation {
+  0% {
+    transform: translate(0px);
+  }
+  33% {
+    transform: translate(2px);
+  }
+  66% {
+    transform: translate(-2px);
+  }
+  100% {
+    transform: translate(0px);
+  }
+}

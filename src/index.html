@@ -1,11 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Calculator</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Calculator</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' type='text/css' media='screen' href='styles.css'>
 </head>
 <body>
-    <h2>Calculator</h2>
+  <div class="container">
+    <p class="container__memory">Mem: <span>0</span></p>
+
+    <div class="container__input">
+        <input type="text" spellcheck="false" autofocus onblur="this.focus()">
+    </div>
+    
+    <span class="container__message">Message</span>
+
+    <div class="container__btns">
+      <button tabindex="-1" id="btn-memrem">MR</button>
+      <button tabindex="-1" id="btn-memminus">M-</button>
+      <button tabindex="-1" id="btn-memplus">M+</button>
+      <button tabindex="-1" id="btn-root">√</button>
+      
+      <button tabindex="-1" id="btn-7">7</button>
+      <button tabindex="-1" id="btn-8">8</button>
+      <button tabindex="-1" id="btn-9">9</button>
+      <button tabindex="-1" id="btn-divide">÷</button>
+      
+      <button tabindex="-1" id="btn-4">4</button>
+      <button tabindex="-1" id="btn-5">5</button>
+      <button tabindex="-1" id="btn-6">6</button>
+      <button tabindex="-1" id="btn-multiply">×</button>
+      
+      <button tabindex="-1" id="btn-1">1</button>
+      <button tabindex="-1" id="btn-2">2</button>
+      <button tabindex="-1" id="btn-3">3</button>
+      <button tabindex="-1" id="btn-minus">-</button>
+    
+      <button tabindex="-1" id="btn-0">0</button>
+      <button tabindex="-1" id="btn-dot">.</button>
+      <button tabindex="-1" id="btn-equiv">=</button>
+      <button tabindex="-1" id="btn-plus">+</button>
+    </div>
+  </div>
+
+  <script src="calculator.js" defer></script>
 </body>
 </html>

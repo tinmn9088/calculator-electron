@@ -7,8 +7,9 @@
   "scripts": {
     "clean": "node ./node_modules/rimraf/bin.js dist/",
     "compile:scss": "sass src:dist",
-    "compile:html": "copyfiles -u 1 src/**/*.html dist/",
-    "compile": "npm run clean && tsc && npm run compile:scss && npm run compile:html",
+    "compile:html": "copyfiles -u 1 \"src/**/*.html\" dist/",
+    "compile:assets": "copyfiles \"assets/**/*\" dist/",
+    "compile": "npm run clean && tsc && npm run compile:scss && npm run compile:html && npm run compile:assets",
     "start": "npm run compile && electron ."
   },
   "devDependencies": {
