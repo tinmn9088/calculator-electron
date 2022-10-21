@@ -20,6 +20,156 @@ class Memory {
   }
 }
 
+interface Handler {
+  handle(expression: string): string;
+  next?: Handler;
+}
+
+class Processor {
+
+  private static handlers: Handler[] = [];
+
+  static {
+    const regexOperand: RegExp     = /\-?\d+\.?\d*/g;
+    const regexNumber: RegExp      = /^\-?\d+\.?\d*$/;
+    const regexAddition: RegExp    = /^\-?\d+\.?\d*\s*\+\s*\d+\.?\d*/;
+    const regexSubsruction: RegExp = /^\-?\d+\.?\d*\s*\-\s*\d+\.?\d*/;
+    const regexMultiply: RegExp    = /^\-?\d+\.?\d*\s*\×\s*\d+\.?\d*/;
+    const regexDivision: RegExp    = /^\-?\d+\.?\d*\s*\÷\s*\d+\.?\d*/;
+    const regexSquareRoot: RegExp  = /^√\d+\.?\d*/;
+
+    const unaryOperation: (expression: string, regex: RegExp) => number | void =
+    (expression: string, regex: RegExp) => {
+      let match: RegExpMatchArray | null = expression.match(regex);        
+      if (match) {
+        let operands: RegExpMatchArray | null = match[0]?.match(regexOperand);
+        if (operands && operands.length >= 1) {
+          return parseFloat(operands[0]);
+        }
+      }
+    };
+
+    const binaryOperation: (expression: string, regex: RegExp) => { 1: number, 2: number } | void =
+    (expression: string, regex: RegExp) => {
+      let match: RegExpMatchArray | null = expression.match(regex);        
+      if (match) {
+        let operands: RegExpMatchArray | null = match[0]?.match(regexOperand);
+        if (operands && operands.length >= 2) {
+          let operand1: number = parseFloat(operands[0]);
+          let operand2: number = parseFloat(operands[1]);
+          return { 1: operand1, 2: operand2 };
+        }
+      }
+    };
+
+    // last handler
+    this.handlers.unshift({
+      handle() {
+        throw new Error("Invalid expression");
+      }
+    });
+
+    // square root handler
+    this.handlers.unshift({
+      handle(expression: string): string {
+        const regex: RegExp = regexSquareRoot;        
+        const operand: number | void = unaryOperation(expression, regex);
+        if (operand) {
+          console.log("√", operand);
+          return expression.replace(regex, Math.sqrt(operand).toString());
+        } else {
+          return this.next?.handle(expression) || "";
+        }
+      },
+      next: this.handlers[0]
+    });
+
+    // division handler
+    this.handlers.unshift({
+      handle(expression: string): string {
+        const regex: RegExp = regexDivision;        
+        const operands: { 1: number, 2: number } | void = binaryOperation(expression, regex);
+        if (operands) {
+          console.log("÷", operands);
+          return expression.replace(regex, (operands[1] / operands[2]).toString());
+        } else {
+          return this.next?.handle(expression) || "";
+        }
+      },
+      next: this.handlers[0]
+    });
+
+    // multiply handler
+    this.handlers.unshift({
+      handle(expression: string): string {
+        const regex: RegExp = regexMultiply;        
+        const operands: { 1: number, 2: number } | void = binaryOperation(expression, regex);
+        if (operands) {
+          console.log("×", operands);
+          return expression.replace(regex, (operands[1] * operands[2]).toString());
+        } else {
+          return this.next?.handle(expression) || "";
+        }
+      },
+      next: this.handlers[0]
+    });
+
+    // subtraction handler
+    this.handlers.unshift({
+      handle(expression: string): string {
+        const regex: RegExp = regexSubsruction;        
+        const operands: { 1: number, 2: number } | void = binaryOperation(expression, regex);
+        if (operands) {
+          console.log("-", operands);
+          return expression.replace(regex, (operands[1] - operands[2]).toString());
+        } else {
+          return this.next?.handle(expression) || "";
+        }
+      },
+      next: this.handlers[0]
+    });
+
+    // addition handler
+    this.handlers.unshift({
+      handle(expression: string): string {
+        const regex: RegExp = regexAddition;        
+        const operands: { 1: number, 2: number } | void = binaryOperation(expression, regex);
+        if (operands) {
+          console.log("+", operands);
+          return expression.replace(regex, (operands[1] + operands[2]).toString());
+        } else {
+          return this.next?.handle(expression) || "";
+        }
+      },
+      next: this.handlers[0]
+    });
+
+    // simple handler
+    this.handlers.unshift({
+      handle(expression: string): string {
+        const regex: RegExp = regexNumber;        
+        if (expression.match(regex)) {
+          return expression;
+        } else {
+          return this.next?.handle(expression) || "";
+        }
+      },
+      next: this.handlers[0]
+    });
+  }
+
+  static process(expression: string): string {
+    expression = expression.trim();
+    let current: string = expression, previous: string;
+    do {
+      previous = current;
+      current = this.handlers[0].handle(current); 
+      console.log(current);           
+    } while (current !== previous);
+    return current;
+  }
+}
+
 // @ts-expect-error null
 let containerInputEl: HTMLElement = document.querySelector(".container__input");
 // @ts-expect-error null
@@ -113,29 +263,27 @@ let buttonClickHandlers: ((value: string) => boolean | void)[] = [
         Memory.value = 0;
         return true;
         case "M-":
-        if (inputEl.value.match(/^\d+$/)) Memory.value -= parseFloat(inputEl.value);
+        Memory.value -= parseFloat(inputEl.value);
         return true;
       case "M+":
-        if (inputEl.value.match(/^\d+$/)) Memory.value += parseFloat(inputEl.value);
+        Memory.value += parseFloat(inputEl.value);
         return true;
     }
   },
   (value) => {
     if (value === "=") {
-      if (!inputEl.value) {
-        return true;
-      }
-      if (inputEl.value.match(/^\d+$/)) {
+      if (inputEl.value) {
+        inputEl.value = Processor.process(inputEl.value);
         showSuccess();
-        return true;
       }
-
-      // calculate
-      throw new Error("???");
+      return true;
     }
   },
   (value) => {
-    inputEl.value += value;
+    let pos: number = inputEl.selectionStart || 0;
+    inputEl.value = [inputEl.value.slice(0, pos), value, inputEl.value.slice(pos)].join("");
+    inputEl.selectionStart = pos + 1;
+    inputEl.selectionEnd = pos + 1;
     return true;
   },
 ];
@@ -153,3 +301,15 @@ buttons.forEach(btn => btn.addEventListener("click", (event) => {
 }));
 
 inputEl.addEventListener("input", showTyping);
+
+document.addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    for (let btn of buttons) {
+      if (btn.textContent === "=") {
+        btn.click();
+        break;
+      };
+    }
+    event.preventDefault();
+  }
+});
