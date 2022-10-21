@@ -120,8 +120,8 @@ class Processor {
         const regex: RegExp = regexSubsruction;        
         const operands: { 1: number, 2: number } | void = binaryOperation(expression, regex);
         if (operands) {
-          console.log("-", operands);
-          return expression.replace(regex, (operands[1] - operands[2]).toString());
+          console.log("+", operands);
+          return expression.replace(regex, (operands[1] + operands[2]).toString());
         } else {
           return this.next?.handle(expression) || "";
         }
@@ -156,10 +156,26 @@ class Processor {
       },
       next: this.handlers[0]
     });
+
+    // translate handler
+    this.handlers.unshift({
+      handle(expression: string): string {
+        expression = expression.trim();
+        expression = expression.replace(/,/g, ".");
+        expression = expression.replace(/\//g, "÷");
+        expression = expression.replace(/\*/g, "×");
+        const regex: RegExp = regexNumber;        
+        if (expression.match(regex)) {
+          return expression;
+        } else {
+          return this.next?.handle(expression) || "";
+        }
+      },
+      next: this.handlers[0]
+    });
   }
 
   static process(expression: string): string {
-    expression = expression.trim();
     let current: string = expression, previous: string;
     do {
       previous = current;
