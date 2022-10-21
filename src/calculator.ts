@@ -56,7 +56,7 @@ class Processor {
         let operands: RegExpMatchArray | null = match[0]?.match(regexOperand);
         if (operands && operands.length >= 2) {
           let operand1: number = parseFloat(operands[0]);
-          let operand2: number = parseFloat(operands[1]);
+          let operand2: number = Math.abs(parseFloat(operands[1]));
           return { 1: operand1, 2: operand2 };
         }
       }
@@ -121,7 +121,7 @@ class Processor {
         const operands: { 1: number, 2: number } | void = binaryOperation(expression, regex);
         if (operands) {
           console.log("+", operands);
-          return expression.replace(regex, (operands[1] + operands[2]).toString());
+          return expression.replace(regex, (operands[1] - operands[2]).toString());
         } else {
           return this.next?.handle(expression) || "";
         }
