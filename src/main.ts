@@ -5,7 +5,8 @@ const createWindow = () => {
   const win = new BrowserWindow({
     width: 400,
     height: 550,
-    resizable: false
+    resizable: false,
+    icon: 'assets/favicon.png'
   });
 
   // win.webContents.openDevTools();
